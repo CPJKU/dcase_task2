@@ -1,0 +1,6 @@
+title: Training General-Purpose Audio Tagging Networks with Noisy Labels and Iterative Self-Verification
+description: Writeup by Matthias Dorfer (2nd Place on Private Kaggle Leaderboard)
+show_downloads: false
+google_analytics:
+theme: jekyll-theme-slate
+markdown: kramdown
