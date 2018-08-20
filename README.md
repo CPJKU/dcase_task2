@@ -6,7 +6,7 @@ carried out as Task 2 within the [DCASE challenge 2018](http://dcase.community/c
 
 For a detailed description of the entire audio tagging system
 please visit the [corresponding github page]().
-In this README I just provide
+In this README I just provide the technical instructions to set up the project.
 
 
 # Getting Started
