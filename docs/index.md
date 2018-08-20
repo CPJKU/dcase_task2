@@ -46,19 +46,19 @@ If you are only interested in how to run the code I recommend to directly jump t
 <br>
 # Introduction
 
-This short writeup describes my approach to the first "Freesound General-purpose Audio Tagging Challenge" which is carried out as Task 2 of the DCASE 2018 Challenge \cite{Fonseca2018_DCASE}.
+This short writeup describes my approach to the first "Freesound General-purpose Audio Tagging Challenge" which is carried out as [Task 2 of the DCASE 2018 Challenge](http://dcase.community/challenge2018/task-general-purpose-audio-tagging) ([here is a link to the corresponding paper](https://arxiv.org/abs/1807.09902)).
 The central motivation for this challenge is to foster research towards more general
 machine listening systems capable of recognizing and discerning a wide range of acoustic events and audio scenes.
 
 In particular, the challenge aims at building an audio tagging system
 which assigns one out of 41 potential candidate labels to an unknown audio recording of arbitrary length.
-The labels comprise sound events such as music instruments, human sounds, animals, or domestic sounds \cite{Fonseca2018_DCASE}.
+The labels comprise sound events such as music instruments, human sounds, animals, or domestic sounds.
 
 What makes working with this data challenging is twofold:
 Firstly, the data set is collected from [Freesound](https://freesound.org/),
 which is a repository for user-generated audio recordings capturing diverse content
 with highly varying signal lengths
-recorded under diverse conditions \cite{DBLP:conf/ismir/FonsecaPFFBFOPS17,DBLP:conf/icassp/GemmekeEFJLMPR17}.
+recorded under diverse conditions ([here is a link to the dataset paper](https://repositori.upf.edu/handle/10230/33299)).
 Secondly, the development (or training) dataset is delivered only partly with manually annotated ground truth labels.
 For the remaining recordings the labels are automatically generated and comprise approximately 35-30% label noise.
 In the remainder of this paper, we refer to the manually annotated training observations as *verified* and to the additionally automatically annotated observations as *unverified*.
@@ -70,7 +70,7 @@ provided without manually verified ground truth.
 Due to the specifics of the current task (the labels of a large fraction of the data have verified manually and thus can be trusted),
 I opted for a straight forward iterative self-verification strategy.
 More concretely, to verify possibly noisy labels, the proposed approach compares the labels of unverified examples with the predictions of a neural network,
-i.e. this can be interpreted as a version of "supervised" pseudo labeling \cite{lee2013pseudo}.
+i.e. this can be interpreted as a version of "supervised" pseudo labeling.
 
 
 <br>
