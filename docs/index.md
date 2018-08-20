@@ -150,6 +150,7 @@ This of course restricts the maximum depth of a network.).
 To that end, I fix a target length of 3000 frames and simply repeat a given excerpt in case it is too short and clip it at 3000 frames in case it is too long.
 The 3000 frame threshold is chosen intuitively as the spectrogram length distribution above has a long tail with few observations.
 
+## Code for Preparing the Spectrograms
 The whole code for preprocessing the data is provided in the script **prepare_spectrograms.py**.
 To compute the spectrograms on the Kaggle data run:
 ```
@@ -410,6 +411,11 @@ The scripts assume that there are four GPUs available for training (one for each
 With four GPUs all experiments should be complete in approximately two days of training.
 If you have only one GPU available running the code will take of course four times as long.
 
+## Data Preparation
+
+For a description on how to prepare the audio signals
+for training please see [Code for Preparing the Spectrograms](#code-for-preparing-the-spectrograms).
+
 ## Training
 
 Pre-train all models using both verified and unverified data:
@@ -534,6 +540,7 @@ Overall Accuracy: 87.683 %
 As the final submission is an average (ensemble) of three different models
 we need a few more scripts to get to the final submission.
 
+### Prepare Test-Set Predictions
 The first step is to prepare all the predictions of the individual fold models on the test set:
 ```
 ./run_experiment.sh test "python eval.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --min_len 3000 --no_len_fix --set test --tag it3 --dump_results"
@@ -543,12 +550,23 @@ The first step is to prepare all the predictions of the individual fold models o
 ./run_experiment.sh test "python eval.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --min_len 3000 --no_len_fix --set test --tag it10 --dump_results"
 ```
 
-Given these predictions we fuse them using simple prediction averaging:
+**Note: The iterations selected above were the best ones in my train runs.
+If you train your own models make sure to pick the best iterations for the three network architectures.
+You can figure out which ones are the best via visual inspection with the *plot_log.py* script**
+
+```
+python lasagne_wrapper/plot_log.py <EXP_ROOT>/experiments/dcase_task2/vgg_gap_spec1_1/results_[1,2,3,4]_it0.pkl --acc --folds_avg
+```
+
+### Average Test-Set Predictions
+Given these predictions we fuse them using simple prediction averaging:<br>
 ```
 python fusion.py test <EXP_ROOT>/vgg_gap_spec1_1/probs_test_tut18T2-specs_train_v1_[1,2,3,4]_it3.pkl <EXP_ROOT>/vgg_gap_spec1_2/probs_test_tut18T2-specs_train_v1_[1,2,3,4]_it7.pkl <EXP_ROOT>/vgg_gap_spec2/probs_test_tut18T2-specs_train_v2_[1,2,3,4]_it10.pkl --out probs_task2_avg_fusion_final.pkl
 ```
-Don't forget to replace *\<EXP_ROOT\>* with your experimental root path.
 
+**Note: You have to replace *\<EXP_ROOT\>* with your experimental root path.**
+
+### Prepare and Evaluate a Submission
 Based on these averaged predictions we can prepare the final submission file:
 ```
 python prepare_tut18_task2_submission.py --prediction_file probs_task2_avg_fusion_final.pkl --out_file subm_task2_avg_fusion_final.txt
