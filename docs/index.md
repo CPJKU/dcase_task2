@@ -1,6 +1,5 @@
 ---
 layout: default
-mathjax: true
 ---
 
 I am [Matthias Dorfer](https://www.jku.at/en/institute-of-computational-perception/about-us/people/matthias-dorfer/) and at the time preparing this writeup
@@ -10,8 +9,8 @@ In the following I describe my submission to the first
 [Freesound general-purpose audio tagging challenge](http://dcase.community/challenge2018/task-general-purpose-audio-tagging)
 carried out as Task 2 within the [DCASE challenge 2018](http://dcase.community/challenge2018/).
 In fact this writeup is very similar (and based on) our workshop paper
-submitted to the [DCASE workshop](http://dcase.community/workshop2018/) organized allong with the challenge.
-However, it also contains more technical details, the code snippets for running the challange code,
+submitted to the [DCASE workshop](http://dcase.community/workshop2018/) organized along with the challenge.
+However, it also contains more technical details, the code snippets for running the challenge code,
 and a more detailed presentation of the experimental results and performance of the system.
 
 The proposed solution is based on a fully convolutional neural network that predicts one out of 41 possible audio class labels when given an audio spectrogram excerpt as an input.
@@ -31,7 +30,7 @@ achieves a mean average precision (MAP@3) of 0.951.
 This is the second best performing system to the corresponding
 [Kaggle challenge](https://www.kaggle.com/c/freesound-audio-tagging/leaderboard).
 
-The rest of this writup is structured as follows:
+The rest of this writeup is structured as follows:
 - [Introduction](#introduction)
 - [Audio Data Pre-processing](#audio-data-pre-processing)
 - [Network and Training Details](#network)
@@ -41,7 +40,7 @@ The rest of this writup is structured as follows:
 - [Running the Code](#running-the-code)
 
 For a detailed description of the entire system you are invited to read the entire writeup.
-If you are only interrested in how to run the code I recommend to directly jump to the Section *[Running the Code](#running-the-code)*.
+If you are only interested in how to run the code I recommend to directly jump to the Section *[Running the Code](#running-the-code)*.
 
 
 <br>
@@ -96,7 +95,7 @@ The actual sox command used in the code for pre-processing the signals is:
 sox <infile>.wav <outfile>.wav norm -0.1 silence 1 0.025 0.15% norm -0.1 reverse silence 1 0.025 0.15% reverse
 ```
 
-Before computing the spectrograms the audio signals are resampled to 32,000 Hz,
+Before computing the spectrograms the audio signals are re-sampled to 32,000 Hz,
 and a Short Time Fourier Transform (STFT) using 1024-sample hann windows is computed.
 To try to capture different aspects of the audio,
 I extract two different spectrogram versions for the final submission:
@@ -245,7 +244,7 @@ The figure below provides an overview on how to prepare this split.
 
 <img src="figs/fold_setup.png" width="300" alt="fold_setup" class="inline"/>
 
-First, the development dataset is seperated into verified and unverified observations.
+First, the development dataset is separated into verified and unverified observations.
 Second, we split each of the two subsets into four [stratified sub-folds](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold),
 meaning that the label distribution in the sub-folds remains the same as in the original dataset.
 We consider this an important detail as the challenge organizers state on the [official web page](https://www.kaggle.com/c/freesound-audio-tagging/data)
@@ -276,12 +275,11 @@ as the verified split should provide us with an as reliable estimate of the real
 
 Once the initial model is trained it is used to predict the labels of its respective unseen validation examples.
 However, in contrast to the model selection we now only predict on the unverified observations.
-In particular, we draw $K$ random 384 frame excerpts of the original 3000 frame spectrograms
-and compute the average of the individual $K$ posterior class distributions $p_i(y|x)$
-as $\bar{p}(y|x) = \frac{1}{K}\sum_{i=1}^{K} p_i(y|x)$ where we set $K=25$ in practice.
+In particular, we draw *K* random 384 frame excerpts of the original 3000 frame spectrograms
+and compute the average of the individual *K* posterior class distributions where we set *K=25* in practice.
 
 We then proceed by considering unverified examples as correctly annotated if:
-1. The provided unverified label $y_u$ matches the label $\underset{i}{\operatorname{argmax}}\; \bar{p}(y|x)$ predicted by the average of the individual posterior distributions.
+1. The provided unverified label matches the label predicted by the average of the individual posterior distributions.
 2. The average of the target class posteriors exceeds 0.95.
 3. A maximum of 40 self-verified examples per class is not yet exceeded.
 
@@ -289,7 +287,7 @@ The intuition behind this approach is that especially for the unverified trainin
 multiple different classes might be present in a single audio recording.
 Still it is tagged with a single and hence unreliable label.
 When predicting on multiple random sub-excerpts of the recording
-this should be revealed by exhibiting a low average posterior probability $\bar{p}(y|x)$ for the provided target class label.
+this should be revealed by exhibiting a low average posterior probability for the provided target class label.
 The last condition for self-verification is introduced as some classes have very few examples
 and we want to avoid shifting the original label distribution of the dataset.
 As this procedure is based on four distinct cross-validation folds
@@ -416,42 +414,42 @@ If you have only one GPU available running the code will take of course four tim
 
 Pre-train all models using both verified and unverified data:
 ```
-python2 run_experiment_set.py --experiment_set pretrain
+python run_experiment_set.py --experiment_set pretrain
 ```
 
 Fine-tune models using iterative self-verification
 ```
-python2 run_experiment_set.py --experiment_set finetune
+python run_experiment_set.py --experiment_set finetune
 ```
 
 Alternatively, you can also run both stages after each other with one call:
 ```
-python2 run_experiment_set.py --experiment_set all
+python run_experiment_set.py --experiment_set all
 ```
 
 When running the last command you will get the following output:
 
 ```
 Running experiment (1 / 63)
-./run_experiment.sh dcase "python2 train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000"
-THEANO_FLAGS="device=cuda0" python2 train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 1
-THEANO_FLAGS="device=cuda1" python2 train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 2
-THEANO_FLAGS="device=cuda2" python2 train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 3
-THEANO_FLAGS="device=cuda3" python2 train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 4
+./run_experiment.sh dcase "python train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000"
+THEANO_FLAGS="device=cuda0" python train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 1
+THEANO_FLAGS="device=cuda1" python train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 2
+THEANO_FLAGS="device=cuda2" python train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 3
+THEANO_FLAGS="device=cuda3" python train.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --fold 4
 Running experiment (2 / 63)
-./run_experiment.sh dcase "python2 train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000"
-THEANO_FLAGS="device=cuda0" python2 train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 1
-THEANO_FLAGS="device=cuda1" python2 train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 2
-THEANO_FLAGS="device=cuda2" python2 train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 3
-THEANO_FLAGS="device=cuda3" python2 train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 4
+./run_experiment.sh dcase "python train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000"
+THEANO_FLAGS="device=cuda0" python train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 1
+THEANO_FLAGS="device=cuda1" python train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 2
+THEANO_FLAGS="device=cuda2" python train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 3
+THEANO_FLAGS="device=cuda3" python train.py --model models/vgg_gap_spec1_1.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 4
 Running experiment (3 / 63)
-./run_experiment.sh dcase "python2 train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000"
-THEANO_FLAGS="device=cuda0" python2 train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 1
-THEANO_FLAGS="device=cuda1" python2 train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 2
-THEANO_FLAGS="device=cuda2" python2 train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 3
-THEANO_FLAGS="device=cuda3" python2 train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 4
+./run_experiment.sh dcase "python train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000"
+THEANO_FLAGS="device=cuda0" python train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 1
+THEANO_FLAGS="device=cuda1" python train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 2
+THEANO_FLAGS="device=cuda2" python train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 3
+THEANO_FLAGS="device=cuda3" python train.py --model models/vgg_gap_spec1_2.py --data tut18T2-specs_train_v1 --max_len 3000 --fold 4
 Running experiment (4 / 63)
-python2 self_verify.py --model models/vgg_gap_spec2.py --spec_dir specs_train_v2 --top_probs_thresh 0.95 --k_per_class 40 --no_len_fix --min_len 3000 --max_len 3000 --stochastic --train_file train_self_verified_it0.csv --tag it0
+python self_verify.py --model models/vgg_gap_spec2.py --spec_dir specs_train_v2 --top_probs_thresh 0.95 --k_per_class 40 --no_len_fix --min_len 3000 --max_len 3000 --stochastic --train_file train_self_verified_it0.csv --tag it0
 ...
 ```
 
@@ -459,12 +457,12 @@ python2 self_verify.py --model models/vgg_gap_spec2.py --spec_dir specs_train_v2
 Once the models are trained you can already evaluate them on the local validation folds ...
 
 ```
-python2 eval.py --model models/vgg_gap_spec1_1.py --tag it0 --data tut18T2-specs_train_v1 --set valid --max_len 3000 --min_len 3000 --no_len_fix --fold 1
+python eval.py --model models/vgg_gap_spec1_1.py --tag it0 --data tut18T2-specs_train_v1 --set valid --max_len 3000 --min_len 3000 --no_len_fix --fold 1
 ```
 
 ... or (as the challenge ground truth is released) on the public, private, private_public leaderboards:
 ```
-python2 eval.py --model models/vgg_gap_spec1_1.py --tag it0 --data tut18T2-specs_train_v1 --set private --max_len 3000 --min_len 3000 --no_len_fix --fold 1
+python eval.py --model models/vgg_gap_spec1_1.py --tag it0 --data tut18T2-specs_train_v1 --set private --max_len 3000 --min_len 3000 --no_len_fix --fold 1
 ```
 
 This will get you something like this:
@@ -533,7 +531,7 @@ Overall Accuracy: 87.683 %
 ```
 
 ## Preparing and Evaluating a Leaderboard Submission
-As the final submission is an average (ensamble) of three different models
+As the final submission is an average (ensemble) of three different models
 we need a few more scripts to get to the final submission.
 
 The first step is to prepare all the predictions of the individual fold models on the test set:
@@ -545,10 +543,11 @@ The first step is to prepare all the predictions of the individual fold models o
 ./run_experiment.sh test "python eval.py --model models/vgg_gap_spec2.py --data tut18T2-specs_train_v2 --max_len 3000 --min_len 3000 --no_len_fix --set test --tag it10 --dump_results"
 ```
 
-Given these predictions we fuse them using simple averaging:
+Given these predictions we fuse them using simple prediction averaging:
 ```
-python fusion.py test ~/experiments/dcase_task2/vgg_gap_spec1_1/probs_test_tut18T2-specs_train_v1_[1,2,3,4]_it3.pkl ~/experiments/dcase_task2/vgg_gap_spec1_2/probs_test_tut18T2-specs_train_v1_[1,2,3,4]_it7.pkl ~/experiments/dcase_task2/vgg_gap_spec2/probs_test_tut18T2-specs_train_v2_[1,2,3,4]_it10.pkl --out probs_task2_avg_fusion_final.pkl
+python fusion.py test <EXP_ROOT>/vgg_gap_spec1_1/probs_test_tut18T2-specs_train_v1_[1,2,3,4]_it3.pkl <EXP_ROOT>/vgg_gap_spec1_2/probs_test_tut18T2-specs_train_v1_[1,2,3,4]_it7.pkl <EXP_ROOT>/vgg_gap_spec2/probs_test_tut18T2-specs_train_v2_[1,2,3,4]_it10.pkl --out probs_task2_avg_fusion_final.pkl
 ```
+Don't forget to replace *\<EXP_ROOT\>* with your experimental root path.
 
 Based on these averaged predictions we can prepare the final submission file:
 ```
@@ -557,6 +556,7 @@ python prepare_tut18_task2_submission.py --prediction_file probs_task2_avg_fusio
 
 You can evaluate the performance of this submission using the following command:
 ```
-python2 evaluate_leaderboard.py --submission_file subm_task2_avg_fusion_final.txt --set private
+python evaluate_leaderboard.py --submission_file subm_task2_avg_fusion_final.txt --set private
 ```
-As leaderboard evaluation sets you can pick eiter private, public, or private_public.
+As leaderboard evaluation sets you can pick either *private*, *public*, or *private_public*.
+

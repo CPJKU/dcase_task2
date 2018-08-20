@@ -4,8 +4,8 @@ This repository contains the corresponding code for the 2nd place submission
 to the first [Freesound general-purpose audio tagging challenge](http://dcase.community/challenge2018/task-general-purpose-audio-tagging)
 carried out as Task 2 within the [DCASE challenge 2018](http://dcase.community/challenge2018/).
 
-For a detailed description of the entire audio tagging system
-please visit the [corresponding github page]().
+For a **detailed description of the entire audio tagging system**
+please visit the [corresponding github page](https://cpjku.github.io/dcase_task2/).
 In this README I just provide the technical instructions to set up the project.
 
 
@@ -48,4 +48,4 @@ EXP_ROOT = "/home/matthias/experiments/dcase_task2/"
 *DATA_ROOT* is the *<DATA_ROOT>* path from above.<br>
 *EXP_ROOT* is where the model parameters and logs will be stored.
 
-Once this is all set up, you can switch to the detailed writeup on this [github page]().
+Once this is all set up, you can switch to the detailed writeup on this [github page](https://cpjku.github.io/dcase_task2/).
