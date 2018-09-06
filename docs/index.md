@@ -9,9 +9,16 @@ In the following I describe my submission to the first
 [Freesound general-purpose audio tagging challenge](http://dcase.community/challenge2018/task-general-purpose-audio-tagging)
 carried out as Task 2 within the [DCASE challenge 2018](http://dcase.community/challenge2018/).
 In fact this writeup is very similar (and based on) our workshop paper
-submitted to the [DCASE workshop](http://dcase.community/workshop2018/) organized along with the challenge.
-However, it also contains more technical details, the code snippets for running the challenge code,
-and a more detailed presentation of the experimental results and performance of the system.
+submitted to the [DCASE workshop](http://dcase.community/workshop2018/) organized along with the challenge (currently under single blind revision).
+
+```
+A reference to the workshop paper might follow here ...
+```
+
+However, this writeup also contains more technical details,
+the code snippets for running the challenge code,
+a more detailed presentation of the experimental results and performance of the system,
+as well as instructions on how to run a live version of the audio tagging system.
 
 The proposed solution is based on a fully convolutional neural network that predicts one out of 41 possible audio class labels when given an audio spectrogram excerpt as an input.
 What makes this classification dataset and the task in general special,
@@ -38,9 +45,11 @@ The rest of this writeup is structured as follows:
 - [Experimental Results](#experimental-results)
 - [Summary](#summary)
 - [Running the Code](#running-the-code)
+- [Live Auido Tagger](#live-audio-tagger)
 
 For a detailed description of the entire system you are invited to read the entire writeup.
 If you are only interested in how to run the code I recommend to directly jump to the Section *[Running the Code](#running-the-code)*.
+If you would like to try a live-version of the system go to [Live Auido Tagger](#live-audio-tagger).
 
 
 <br>
@@ -578,3 +587,28 @@ python evaluate_leaderboard.py --submission_file subm_task2_avg_fusion_final.txt
 ```
 As leaderboard evaluation sets you can pick either *private*, *public*, or *private_public*.
 
+
+<br>
+# Live Audio Tagger
+
+As an additional experiment I also tried to test the system in a live setting using the [madmom OnlineProcessor](https://madmom.readthedocs.io/en/latest/modules/processors.html).
+To keep it simple I did not apply SOX audio pre-processing in this case.
+If you would like to train such an online-capable model on your own you have to use the flag  *--no_preprocessing* when preparing the spectrograms for training.
+
+```
+python prepare_spectrograms.py --audio_path <DATA_ROOT>/audio_test --spec_path <DATA_ROOT>/specs_test_v2_no_pp --spec_version 2 --dump --no_preprocessing
+```
+
+If you just want to try the model, you can download a pre-trained model [here](http://drive.jku.at/ssf/s/readFile/share/6468/2924678229329939396/publicLink/params_vgg_gap_spec2_no_pp.pkl).
+
+<img src="figs/audio_tagger.png" width="350" alt="network_architecture" class="inline"/>
+
+Before starting up the audio-tagger make sure you have OpenCV installed (package *opencv-python*) as it is used for visualizing the current spectrogram and the predictions of the model.
+```
+python audio_tagger.py --model models/vgg_gap_spec2_no_pp.py --params <PATH_TO_DOWNLOADED_PARAMS>.pkl --predict_every_k 10
+```
+
+**Note: This will only work, if you have a CUDA-capable GPU available.
+Otherwise the predictions will take too long which will end up in a delay.**
+
+If you have a GPU which is too slow you can still control how often the tagger updates its prediction using the parameter *--predict_every_k*. The default value, which worked well on my system is to predict every 10 frames.

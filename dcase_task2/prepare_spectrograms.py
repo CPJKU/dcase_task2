@@ -73,7 +73,8 @@ sig_proc = SignalProcessor(num_channels=1, sample_rate=32000, norm=True)
 fsig_proc = FramedSignalProcessor(frame_size=1024, hop_size=128, origin='future')
 spec_proc = SpectrogramProcessor(frame_size=1024)
 filt_proc = LogarithmicFilteredSpectrogramProcessor(filterbank=LogFilterbank, num_bands=26, fmin=20, fmax=14000)
-processor_version2 = SequentialProcessor([sig_proc, fsig_proc, spec_proc, filt_proc])
+processor_pipeline2 = [sig_proc, fsig_proc, spec_proc, filt_proc]
+processor_version2 = SequentialProcessor(processor_pipeline2)
 
 
 if __name__ == "__main__":
@@ -86,6 +87,7 @@ if __name__ == "__main__":
     parser.add_argument('--show', help='show spectrogram plots.', type=int, default=None)
     parser.add_argument('--dump', help='dump spectrograms.', action='store_true')
     parser.add_argument('--spec_version', help='spectrogram version to compute (1 or 2).', type=int, default=1)
+    parser.add_argument('--no_preprocessing', help='compute spectrogram for original audios.', action='store_true')
     args = parser.parse_args()
 
     # create destination directory
@@ -112,12 +114,16 @@ if __name__ == "__main__":
         if args.show and i >= args.show:
             break
 
+        # use original audio
+        if args.no_preprocessing:
+            aug_audio_file = file
         # sox silence clipping
-        aug_cmd = "norm -0.1 silence 1 0.025 0.15% norm -0.1 reverse silence 1 0.025 0.15% reverse"
-        aug_audio_file = "%stmp.wav" % tstp
-        os.system("sox %s %s %s" % (file, aug_audio_file, aug_cmd))
+        else:
+            aug_cmd = "norm -0.1 silence 1 0.025 0.15% norm -0.1 reverse silence 1 0.025 0.15% reverse"
+            aug_audio_file = "%stmp.wav" % tstp
+            os.system("sox %s %s %s" % (file, aug_audio_file, aug_cmd))
 
-        assert os.path.exists(aug_audio_file), "SOX Problem ... clipped wav does not exist!"
+            assert os.path.exists(aug_audio_file), "SOX Problem ... clipped wav does not exist!"
 
         # compute spectrogram
         try:
@@ -138,7 +144,7 @@ if __name__ == "__main__":
 
             print("Spectrogram Shape:", spectrogram.shape)
 
-            plt.figure("Spectrogram")
+            plt.figure("General-Purpose ")
             plt.clf()
             plt.subplots_adjust(right=0.98, left=0.1, bottom=0.1, top=0.99)
             plt.imshow(spectrogram[0], origin="lower", interpolation="nearest", cmap="viridis")
