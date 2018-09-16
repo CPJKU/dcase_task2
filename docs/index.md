@@ -3,17 +3,17 @@ layout: default
 ---
 
 I am [Matthias Dorfer](https://www.jku.at/en/institute-of-computational-perception/about-us/people/matthias-dorfer/) and at the time preparing this writeup
-working as a Research Assistent (PhD candidate) under the supervision of [Prof. Gerhard Widmer](https://www.jku.at/en/institute-of-computational-perception/about-us/people/gerhard-widmer/) at the [Institute of Computational Perception](https://www.jku.at/en/institute-of-computational-perception/) at [Johannes Kepler University Linz](https://www.jku.at/en/).
+working as a Research Assistant (PhD Candidate) under the supervision of [Prof. Gerhard Widmer](https://www.jku.at/en/institute-of-computational-perception/about-us/people/gerhard-widmer/) at the [Institute of Computational Perception](https://www.jku.at/en/institute-of-computational-perception/) at [Johannes Kepler University Linz](https://www.jku.at/en/).
 
 In the following I describe my submission to the first
 [Freesound general-purpose audio tagging challenge](http://dcase.community/challenge2018/task-general-purpose-audio-tagging)
 carried out as Task 2 within the [DCASE challenge 2018](http://dcase.community/challenge2018/).
 In fact this writeup is very similar (and based on) our workshop paper
-submitted to the [DCASE workshop](http://dcase.community/workshop2018/) organized along with the challenge (currently under single blind revision).
+at the [DCASE workshop](http://dcase.community/workshop2018/) organized along with the challenge:
 
-```
-A reference to the workshop paper might follow here ...
-```
+Matthias Dorfer and Gerhard Widmer.
+"Training General-Purpose Audio Tagging Networks with Noisy Labels and Iterative Self-Verification".
+*Workshop on Detection and Classification of Acoustic Scenes and Events (DCASE2018)*, Surrey, UK, 2018
 
 However, this writeup also contains more technical details,
 the code snippets for running the challenge code,
@@ -24,7 +24,7 @@ The proposed solution is based on a fully convolutional neural network that pred
 What makes this classification dataset and the task in general special,
 is the fact that only 3,700 of the 9,500 provided training examples
 are delivered with manually verified ground truth labels.
-The remaining non-verified observations are expected to contain a substantial amount of label noise (30-35%).
+The remaining non-verified observations are expected to contain a substantial amount of label noise (up to 30-35\% in the ``worst" categories).
 I address this issue by a simple, iterative self-verification process,
 which gradually shifts unverified labels into the verified, trusted training set.
 The decision criterion for self-verifying a training example is
@@ -45,11 +45,11 @@ The rest of this writeup is structured as follows:
 - [Experimental Results](#experimental-results)
 - [Summary](#summary)
 - [Running the Code](#running-the-code)
-- [Live Auido Tagger](#live-audio-tagger)
+- [Live Audio Tagger](#live-audio-tagger)
 
 For a detailed description of the entire system you are invited to read the entire writeup.
 If you are only interested in how to run the code I recommend to directly jump to the Section *[Running the Code](#running-the-code)*.
-If you would like to try a live-version of the system go to [Live Auido Tagger](#live-audio-tagger).
+If you would like to try a live-version of the system go to [Live Audio Tagger](#live-audio-tagger).
 
 
 <br>
@@ -69,7 +69,8 @@ which is a repository for user-generated audio recordings capturing diverse cont
 with highly varying signal lengths
 recorded under diverse conditions ([here is a link to the dataset paper](https://repositori.upf.edu/handle/10230/33299)).
 Secondly, the development (or training) dataset is delivered only partly with manually annotated ground truth labels.
-For the remaining recordings the labels are automatically generated and comprise approximately 35-30% label noise.
+For the remaining recordings the labels are automatically generated
+and comprise up to 30-35\% label noise in the ``worst" categories.
 In the remainder of this paper, we refer to the manually annotated training observations as *verified* and to the additionally automatically annotated observations as *unverified*.
 
 The central idea of my approach is to address the problem of noisy labels
@@ -285,17 +286,17 @@ as the verified split should provide us with an as reliable estimate of the real
 
 Once the initial model is trained it is used to predict the labels of its respective unseen validation examples.
 However, in contrast to the model selection we now only predict on the unverified observations.
-In particular, we draw *K* random 384 frame excerpts of the original 3000 frame spectrograms
+In particular, we draw *K* random 384 frame excerpts of the original 3000 frame spectrograms of the audio clip to verify
 and compute the average of the individual *K* posterior class distributions where we set *K=25* in practice.
 
 We then proceed by considering unverified examples as correctly annotated if:
 1. The provided unverified label matches the label predicted by the average of the individual posterior distributions.
 2. The average of the target class posteriors exceeds 0.95.
-3. A maximum of 40 self-verified examples per class is not yet exceeded.
+3. A maximum count of 40 self-verified examples per class is not yet reached.
 
 The intuition behind this approach is that especially for the unverified training examples
 multiple different classes might be present in a single audio recording.
-Still it is tagged with a single and hence unreliable label.
+Still it is annotated with a single and hence unreliable label.
 When predicting on multiple random sub-excerpts of the recording
 this should be revealed by exhibiting a low average posterior probability for the provided target class label.
 The last condition for self-verification is introduced as some classes have very few examples
@@ -313,8 +314,9 @@ this time using the officially provided verified observations
 and the ones passing the self-verification conditions in the previous stage.
 For the fine-tuning stage we train for 30 epochs with an initial learning rate of 0.0002,
 which is again decayed to zero starting after five epochs.
-In the fine-tuning stage mixup data augmentation is turned off.
+We do not use mixup data augmentation in this stage anymore.
 After fine-tuning we go back to step two and repeat the whole procedure in a loop for ten times.
+Note that we do not reset the network to the initial parameterization after each fine-tuning iteration but continue training the same model.
 
 To fine-tune the model with the self-verified examples from the previous step run the command below.
 (**Note that this is again only for the first iteration. I provide scripts in my repository which run all the code with one call.**):
