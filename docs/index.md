@@ -2,6 +2,18 @@
 layout: default
 ---
 
+<style>
+div.info {    
+    background-color: #e5efff;
+    border-color: #a2c3f9;
+    border-left: 5px solid #a2c3f9;
+    border-right: 5px solid #a2c3f9;
+    border-top: 5px solid #a2c3f9;
+    border-bottom: 5px solid #a2c3f9;
+    padding: 0.5em;
+    }
+</style>
+
 I am [Matthias Dorfer](https://www.jku.at/en/institute-of-computational-perception/about-us/people/matthias-dorfer/) and at the time preparing this writeup
 working as a Research Assistant (PhD Candidate) under the supervision of [Prof. Gerhard Widmer](https://www.jku.at/en/institute-of-computational-perception/about-us/people/gerhard-widmer/) at the [Institute of Computational Perception](https://www.jku.at/en/institute-of-computational-perception/) at [Johannes Kepler University Linz](https://www.jku.at/en/).
 
@@ -11,9 +23,11 @@ carried out as Task 2 within the [DCASE challenge 2018](http://dcase.community/c
 In fact this writeup is very similar (and based on) our workshop paper
 at the [DCASE workshop](http://dcase.community/workshop2018/) organized along with the challenge:
 
+<div class="info">
 Matthias Dorfer and Gerhard Widmer.
 "Training General-Purpose Audio Tagging Networks with Noisy Labels and Iterative Self-Verification".
-*Workshop on Detection and Classification of Acoustic Scenes and Events (DCASE2018)*, Surrey, UK, 2018
+Workshop on Detection and Classification of Acoustic Scenes and Events (DCASE2018), Surrey, UK, 2018
+</div>
 
 However, this writeup also contains more technical details,
 the code snippets for running the challenge code,
