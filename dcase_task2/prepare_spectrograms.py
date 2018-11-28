@@ -130,7 +130,12 @@ if __name__ == "__main__":
             spectrogram = proc.process(aug_audio_file)
         except:
             print("Audio clipping failed! Computing spectrogram on original audio.")
-            spectrogram = proc.process(file)
+            try:
+                spectrogram = proc.process(file)
+            except Exception:
+                print("Could not process %s. Ignoring." % file)
+                os.remove(aug_audio_file)
+                continue
 
         # fix spectrogram dimensions
         if spectrogram.ndim == 2:
