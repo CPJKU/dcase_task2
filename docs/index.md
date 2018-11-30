@@ -25,11 +25,12 @@ at the [DCASE workshop](http://dcase.community/workshop2018/) organized along wi
 
 <div class="info">
 Matthias Dorfer and Gerhard Widmer.
-"Training General-Purpose Audio Tagging Networks with Noisy Labels and Iterative Self-Verification" [PDF](http://dcase.community/documents/workshop2018/proceedings/DCASE2018Workshop_Dorfer_143.pdf).
+"Training General-Purpose Audio Tagging Networks with Noisy Labels and Iterative Self-Verification".
 Proceedings of the Detection and Classification of Acoustic Scenes and Events 2018 Workshop (DCASE2018), Surrey, UK, 2018
 </div>
 
-However, this writeup also contains more technical details,
+You can find a pdf version of the paper [here](http://dcase.community/documents/workshop2018/proceedings/DCASE2018Workshop_Dorfer_143.pdf).
+This writeup also contains more technical details,
 the code snippets for running the challenge code,
 a more detailed presentation of the experimental results and performance of the system,
 as well as instructions on how to run a live version of the audio tagging system.
