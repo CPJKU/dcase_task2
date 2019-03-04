@@ -616,7 +616,7 @@ If you would like to train such an online-capable model on your own you have to 
 python prepare_spectrograms.py --audio_path <DATA_ROOT>/audio_test --spec_path <DATA_ROOT>/specs_test_v2_no_pp --spec_version 2 --dump --no_preprocessing
 ```
 
-If you just want to try the model, you can download a pre-trained model [here](http://drive.jku.at/ssf/s/readFile/share/6468/2924678229329939396/publicLink/params_vgg_gap_spec2_no_pp.pkl).
+If you just want to try the model, you can download a pre-trained model [here](http://www.cp.jku.at/people/dorfer/share/params_vgg_gap_spec2_no_pp.pkl.tar.gz).
 
 <img src="figs/audio_tagger.png" width="350" alt="network_architecture" class="inline"/>
 
