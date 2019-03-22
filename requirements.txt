@@ -1,8 +1,7 @@
 scipy==1.0.0
-numpy==1.11.0
+numpy==1.16.2
 munkres==1.0.12
 Theano==0.9.0
-madmom.egg==info
 scikit_image==0.13.0
 matplotlib==2.1.1
 tqdm==4.11.2
@@ -10,6 +9,5 @@ seaborn==0.8
 librosa==0.6.1
 setuptools==20.7.0
 lasagne==0.1
-madmom==0.15.1
-skimage==0.0
 scikit_learn==0.19.2
+madmom==0.15.1
