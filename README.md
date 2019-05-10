@@ -13,10 +13,20 @@ In this README I just provide the technical instructions to set up the project.
 Before we can start working with the code, we first need to set up a few things:
 
 ## Setup and Requirements
-For a list of required python packages see the *requirements.txt*
+
+**Note:** This package requires Python 2.7!
+
+For a list of required python packages see the `requirements.txt`
 or just install them all at once using pip.
 ```
 pip install -r requirements.txt
+```
+
+or the `environment.yaml`:
+
+```
+conda env create -f environment.yaml
+conda activate dcase18
 ```
 
 To install the project in develop mode run
@@ -49,3 +59,12 @@ EXP_ROOT = "/home/matthias/experiments/dcase_task2/"
 *EXP_ROOT* is where the model parameters and logs will be stored.
 
 Once this is all set up, you can switch to the detailed writeup on this [github page](https://cpjku.github.io/dcase_task2/).
+
+## Audio Tagger
+
+In order to run the `audio_tagger.py`, we had to install `pyaudio` and `portaudio`
+in our Anaconda environment (Ubuntu 18.04):
+
+```
+conda install nwani::portaudio nwani::pyaudio
+```
